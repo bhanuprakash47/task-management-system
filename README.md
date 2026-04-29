@@ -57,7 +57,7 @@ JWT_SECRET_KEY=your_secret_key
 
 Frontend (.env)
 
-VITE_API_URL=http://localhost:5000  
+VITE_API_URL=https://task-management-system-3-mx8y.onrender.com/api
 
 ## How to Run Locally
 
@@ -89,8 +89,7 @@ If token is invalid or expired, user is logged out.
 ## API Endpoints
 
 Base URL:
-http://localhost:5000/api
-
+https://task-management-system-3-mx8y.onrender.com/api
 Auth:
 
 POST /api/auth/signup  
@@ -117,7 +116,7 @@ Backend (Render):
 Frontend (Vercel):
 - Build: npm run build
 - Output: dist
-- Add env: VITE_API_URL=https://your-backend-url/
+- Add env: VITE_API_URL=https://task-management-system-3-mx8y.onrender.com/api
 
 Database (Supabase):
 - Use PostgreSQL connection string
