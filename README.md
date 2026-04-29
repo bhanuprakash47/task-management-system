@@ -1,21 +1,37 @@
 # Task Management System
 
-A full-stack task manager with JWT authentication.
+This is a full-stack task management application where users can register, log in, and manage their own tasks securely.
 
-- Backend: Node.js, Express, Sequelize, PostgreSQL
-- Frontend: React, Vite, Tailwind CSS, Axios
+## Tech Stack
+
+Backend:
+- Node.js
+- Express
+- Sequelize ORM
+- PostgreSQL (Supabase)
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- Axios
+
+Deployment:
+- Frontend: Vercel
+- Backend: Render
+- Database: Supabase
 
 ## Features
 
 - User signup and login
-- Protected task APIs with JWT Bearer token
-- Create, list, update, delete single task
-- Delete all tasks for logged-in user
-- Frontend route protection for dashboard
+- JWT-based authentication
+- Protected APIs
+- Create, read, update, delete tasks
+- Delete all tasks of a user
+- Each user can access only their own tasks
+- Simple and clean UI
 
 ## Project Structure
 
-```text
 TaskManagementSystem/
   backend/
     config/
@@ -24,173 +40,126 @@ TaskManagementSystem/
     models/
     routes/
     server.js
+
   frontend/
     src/
       components/
       pages/
       services/
-```
-
-## Prerequisites
-
-- Node.js 20+
-- npm
-- PostgreSQL
 
 ## Environment Variables
 
-Create `backend/.env`:
+Backend (.env)
 
-```env
-DATABASE_URL=postgresql://postgres:your_password@localhost:5432/taskManager
-PORT=5000
-JWT_SECRET_KEY=replace_with_a_long_random_secret
-```
+DATABASE_URL=your_supabase_postgres_url  
+PORT=5000  
+JWT_SECRET_KEY=your_secret_key  
 
-Create `frontend/.env`:
+Frontend (.env)
 
-```env
-VITE_API_URL=http://localhost:5000
-```
+VITE_API_URL=http://localhost:5000  
 
-Notes:
+## How to Run Locally
 
-- Backend only uses `DATABASE_URL`, `PORT`, `JWT_SECRET_KEY`.
-- Frontend only uses `VITE_API_URL`.
-- Use `backend/.env.example` as a template.
+Backend
 
-## Install and Run
+cd backend  
+npm install  
+npm run dev  
 
-### 1. Backend
+Frontend
 
-```bash
-cd backend
-npm install
-npm run dev
-```
+cd frontend  
+npm install  
+npm run dev  
 
-Alternative production-style run:
-
-```bash
-npm start
-```
-
-### 2. Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open the URL shown by Vite (usually http://localhost:5173).
+Open in browser:
+http://localhost:5173
 
 ## How Authentication Works
 
-1. User logs in with email/password.
-2. Backend returns a JWT.
-3. Frontend stores token in `localStorage`.
-4. Axios sends `Authorization: Bearer <token>` automatically.
-5. Backend middleware verifies token and also checks if user still exists in DB.
+1. User logs in using email and password
+2. Server returns a JWT token
+3. Token is stored in localStorage
+4. Every request sends token in Authorization header
+5. Backend verifies token before giving access
 
-If token is invalid/expired or user no longer exists, APIs return `401` and frontend redirects to login.
+If token is invalid or expired, user is logged out.
 
-## API Reference
+## API Endpoints
 
-Base URL: `http://localhost:5000`
+Base URL:
+http://localhost:5000/api
 
-### Auth
+Auth:
 
-- `POST /auth/signup`
-  - Body: `{ "name": "...", "email": "...", "password": "..." }`
-  - Success: `201`
+POST /api/auth/signup  
+POST /api/auth/login  
 
-- `POST /auth/login`
-  - Body: `{ "email": "...", "password": "..." }`
-  - Success: `200` with `{ token }`
+Tasks (Protected):
 
-### Tasks (Protected)
+Authorization: Bearer <token>
 
-Send header: `Authorization: Bearer <token>`
+GET /api/tasks  
+POST /api/tasks/create  
+GET /api/tasks/:id  
+PUT /api/tasks/:id  
+DELETE /api/tasks/:id  
+DELETE /api/tasks  
 
-- `GET /tasks`
-  - Returns all tasks of the logged-in user
+## Deployment
 
-- `POST /tasks/create`
-  - Body: `{ "title": "...", "status": "pending" | "completed" }`
+Backend (Render):
+- Build: npm install
+- Start: node server.js
+- Add env variables: DATABASE_URL, JWT_SECRET_KEY
 
-- `GET /tasks/:id`
-  - Returns one task if it belongs to logged-in user
+Frontend (Vercel):
+- Build: npm run build
+- Output: dist
+- Add env: VITE_API_URL=https://your-backend-url/
 
-- `PUT /tasks/:id`
-  - Body: `{ "title"?: "...", "status"?: "pending" | "completed" }`
+Database (Supabase):
+- Use PostgreSQL connection string
+- Enable SSL in Sequelize config
 
-- `DELETE /tasks/:id`
-  - Deletes one task
+## Notes
 
-- `DELETE /tasks/delete`
-  - Deletes all tasks for logged-in user
+- Do not use sequelize.sync({ alter: true }) in production
+- Use migrations for production database changes
+- Make sure CORS is enabled in backend
+- Always use correct API URL in frontend
 
-## Development Notes
+## Common Issues
 
-- Backend startup calls `sequelize.sync({ alter: true })` in `backend/server.js`.
-- This is convenient for local development, but do not use this strategy in production.
-- Use migrations for production schema changes.
+1. Tasks not creating  
+Check if user is logged in and token is valid
 
-## Common Issues and Fixes
+2. API not working  
+Check backend URL and frontend env file
 
-### 1) Foreign key error when creating task
-
-Error example:
-
-```text
-violates foreign key constraint "tasks_userId_fkey"
-```
-
-Cause:
-
-- Token contains a user id that does not exist in `users` table (stale token or deleted user).
-
-Fix:
-
-1. Logout (or clear `localStorage` token).
-2. Login again.
-3. If needed, signup again, then login.
-
-### 2) Backend starts but frontend cannot call API
-
-Check:
-
-- `frontend/.env` has correct `VITE_API_URL`
-- Backend is running on same port in `backend/.env`
-
-### 3) Database connection error
-
-Check:
-
-- `DATABASE_URL` format
-- PostgreSQL server running
-- DB user permissions
+3. Database error  
+Check DATABASE_URL and connection
 
 ## Scripts
 
-Backend (`backend/package.json`):
+Backend:
+npm run dev  
+npm start  
 
-- `npm run dev` -> `nodemon server.js`
-- `npm start` -> `node server.js`
+Frontend:
+npm run dev  
+npm run build  
+npm run preview  
 
-Frontend (`frontend/package.json`):
+## Future Improvements
 
-- `npm run dev` -> Vite dev server
-- `npm run build` -> production build
-- `npm run preview` -> preview production build
-- `npm run lint` -> ESLint
+- Add validation for inputs
+- Add pagination and filtering
+- Improve UI
+- Add tests
+- Use secure cookies instead of localStorage
 
-## Next Improvements
+## Summary
 
-1. Add request validation for all payloads.
-2. Add tests (unit + API integration).
-3. Replace `localStorage` token strategy with secure cookies for production.
-4. Add Helmet and rate limiting.
-5. Replace `sequelize.sync({ alter: true })` with migrations.
-
+This project shows how to build a complete full-stack application with authentication, database integration, and deployment.
