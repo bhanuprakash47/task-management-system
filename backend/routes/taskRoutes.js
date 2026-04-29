@@ -4,7 +4,8 @@ import {
   getAllTasks,
   getTaskById,
   updateTask,
-  deleteTask
+  deleteTask,
+  deleteAllTask
 } from "./controllers/taskController.js"
 
 import verifyToken from "../middlewares/authMiddleware.js"
@@ -23,8 +24,10 @@ router.get("/:id", verifyToken, getTaskById)
 // Update Task
 router.put("/:id", verifyToken, updateTask)
 
-// Delete Task
+// Delete Task By ID
 router.delete("/:id", verifyToken, deleteTask)
+
+router.delete("/delete",verifyToken,deleteAllTask)
 
 export default router
 
