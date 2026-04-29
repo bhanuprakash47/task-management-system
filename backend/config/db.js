@@ -3,7 +3,15 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const databaseUrl = process.env.DATABASE_URL
+
+if (!databaseUrl) {
+  throw new Error(
+    "Database URL missing. Set DATABASE_URL in backend/.env"
+  )
+}
+
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: false,
 })

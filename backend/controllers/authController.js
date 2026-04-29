@@ -1,10 +1,10 @@
-import User from "./models/User.js"
+import User from "../models/User.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-const secretKey=process.env.JWT_SECRET_KEY
+const secretKey = process.env.JWT_SECRET_KEY
 if(!secretKey){
-    throw new Error("Jwt Secret not defined")
+    throw new Error("JWT secret missing. Set JWT_SECRET_KEY in backend/.env")
 }
 
 export const registerUser=async(req,res)=>{
